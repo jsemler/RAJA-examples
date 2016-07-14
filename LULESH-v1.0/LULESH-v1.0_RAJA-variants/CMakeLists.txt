@@ -55,10 +55,14 @@ else()
   add_executable(lulesh-RAJA-serial.exe
     luleshRAJA-serial.cxx)
 
+  add_dependencies(lulesh-RAJA-serial.exe RAJA)
+
   target_link_libraries(lulesh-RAJA-serial.exe
    RAJA
    ${RT_LIBRARIES})
 endif()
+
+add_dependencies(lulesh-RAJA-parallel.exe RAJA)
 
 target_link_libraries(lulesh-RAJA-parallel.exe
   RAJA

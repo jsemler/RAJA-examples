@@ -33,6 +33,8 @@ endif()
                                                                                                           
 list(APPEND KRIPKE_LIBS lib_kripke_raja) 
 
+add_dependencies(lib_kripke_raja RAJA)
+
 
 # Propagate to parent directory
 set(KRIPKE_LIBS ${KRIPKE_LIBS} PARENT_SCOPE) 
