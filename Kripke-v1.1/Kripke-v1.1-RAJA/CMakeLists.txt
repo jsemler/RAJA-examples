@@ -41,6 +41,11 @@
 #
 ###############################################################################
 
+
+if (NOT RAJA_ENABLE_NESTED)
+  add_definitions(-DRAJA_ENABLE_NESTED)
+endif()
+
 include_directories(.)
 
 add_subdirectory(Kripke)
