@@ -2154,8 +2154,8 @@ void CalcQForElems(Domain *domain)
       Release(&domain->delv_xi) ;
 
       /* Don't allow excessive artificial viscosity */
-      Real_t qstop = domain->qstop ;
-      int id = -1; 
+      //Real_t qstop = domain->qstop ;
+      //int id = -1; 
 
       // RAJA::forall<elem_exec_policy>( *domain->domElemList, [=] (int i) {
       //    if ( domain->q[i] > qstop ) {
@@ -2165,9 +2165,9 @@ void CalcQForElems(Domain *domain)
       //  }
       // ) ;
 
-      if(id >= 0) {
-         exit(QStopError) ;
-      }
+      //if(id >= 0) {
+      //   exit(QStopError) ;
+      //}
    }
 }
 
@@ -3193,8 +3193,8 @@ int main(int argc, char *argv[])
 
    timer_main.stop("timer_main");
 
-   printf("Total Cycle Time (sec) = %Lf\n", timer_cycle.elapsed() );
-   printf("Total main Time (sec) = %Lf\n", timer_main.elapsed() );
+   printf("Total Cycle Time (sec) = %f\n", timer_cycle.elapsed() );
+   printf("Total main Time (sec) = %f\n", timer_main.elapsed() );
 
    return 0 ;
 }

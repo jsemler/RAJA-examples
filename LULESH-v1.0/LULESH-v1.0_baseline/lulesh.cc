@@ -2923,8 +2923,8 @@ int main(int argc, char *argv[])
    timer_main.stop("timer_main");
 
    printf("iterations: %d\n",its);
-   printf("Total Cycle Time (sec) = %Lf\n", timer_cycle.elapsed() );
-   printf("Total main Time (sec) = %Lf\n", timer_main.elapsed() );
+   printf("Total Cycle Time (sec) = %f\n", timer_cycle.elapsed() );
+   printf("Total main Time (sec) = %f\n", timer_main.elapsed() );
 
    //   FILE *fp = fopen("x.asc","wb");
    //for (Index_t i=0; i<mesh.numElem(); i++)
