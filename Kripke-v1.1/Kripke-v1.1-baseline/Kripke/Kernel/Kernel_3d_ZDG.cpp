@@ -246,7 +246,6 @@ void Kernel_3d_ZDG::source(Grid_Data *grid_data){
     Subdomain &sdom = grid_data->subdomains[sdom_id];
     int    const * KRESTRICT zones_to_mixed = &sdom.zones_to_mixed[0];
     int    const * KRESTRICT num_mixed = &sdom.num_mixed[0];
-    int    const * KRESTRICT mixed_to_zones = &sdom.mixed_to_zones[0];
     int    const * KRESTRICT mixed_material = &sdom.mixed_material[0];
     double const * KRESTRICT mixed_fraction = &sdom.mixed_fraction[0];
     double       * KRESTRICT phi_out = grid_data->phi_out[zs]->ptr();

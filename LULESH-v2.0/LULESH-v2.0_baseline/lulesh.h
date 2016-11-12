@@ -497,13 +497,6 @@ class Domain {
 
    // Element-centered
 
-   // Region information
-   Int_t    m_numReg ;
-   Int_t    m_cost; //imbalance cost
-   Index_t *m_regElemSize ;   // Size of region sets
-   Index_t *m_regNumList ;    // Region number per domain element
-   Index_t **m_regElemlist ;  // region indexset 
-
    std::vector<Index_t>  m_nodelist ;     /* elemToNode connectivity */
 
    std::vector<Index_t>  m_lxim ;  /* element connectivity across each face */
@@ -598,6 +591,13 @@ class Domain {
 
    Index_t m_maxPlaneSize ;
    Index_t m_maxEdgeSize ;
+
+   // Region information
+   Int_t    m_numReg ;
+   Int_t    m_cost; //imbalance cost
+   Index_t *m_regElemSize ;   // Size of region sets
+   Index_t *m_regNumList ;    // Region number per domain element
+   Index_t **m_regElemlist ;  // region indexset 
 
    // OMP hack 
    Index_t *m_nodeElemStart ;

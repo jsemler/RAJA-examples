@@ -91,7 +91,7 @@ RAJA_INLINE void forallZoneSets(Grid_Data *grid_data, BODY body){
 
 
 #define FORALL_SUBDOMAINS(SDOM_POL, DOMAIN, ID, SDOM) \
-  for(int ID = 0;ID < DOMAIN.subdomains.size();++ ID){ \
+  for(size_t ID = 0;ID < DOMAIN.subdomains.size();++ ID){ \
     Subdomain &SDOM = DOMAIN.subdomains[ID];
 
 #define FORALL_ZONESETS(SDOM_POL, DOMAIN, ID, SDOM) \

@@ -174,7 +174,7 @@ public:
 
   inline double sum(void) const {
     double s = 0.0;
-    for(size_t i = 0;i < elements;++ i){
+    for(ssize_t i = 0;i < elements;++ i){
       s+= data_linear[i];
     }
     return s;
@@ -184,13 +184,13 @@ public:
 #ifdef KRIPKE_USE_OPENMP
 #pragma omp parallel for
 #endif
-    for(int i = 0;i < elements;++ i){
+    for(ssize_t i = 0;i < elements;++ i){
       data_linear[i] = v;
     }
   }
 
   inline void randomizeData(void){
-    for(int i = 0;i < elements;++ i){
+    for(ssize_t i = 0;i < elements;++ i){
       data_linear[i] = drand48();
     }
   }
@@ -198,7 +198,7 @@ public:
   inline void copy(SubTVec const &b){
     for(int g = 0;g < groups;++ g){
       for(int d = 0;d < directions; ++ d){
-        for(int z = 0;z < zones;++ z){
+        for(ssize_t z = 0;z < zones;++ z){
           // Copy using abstract indexing
           (*this)(g,d,z) = b(g,d,z);
         }
@@ -213,13 +213,13 @@ public:
     int num_wrong = 0;
     for(int g = 0;g < groups;++ g){
       for(int d = 0;d < directions; ++ d){
-        for(int z = 0;z < zones;++ z){
+        for(ssize_t z = 0;z < zones;++ z){
           // Copy using abstract indexing
           double err = std::abs((*this)(g,d,z) - b(g,d,z));
           if(err > tol){
             is_diff = true;
             if(verbose){
-              printf("%s[g=%d, d=%d, z=%d]: |%e - %e| = %e\n",
+              printf("%s[g=%d, d=%d, z=%ld]: |%e - %e| = %e\n",
                   name.c_str(), g,d,z, (*this)(g,d,z), b(g,d,z), err);
               num_wrong ++;
               if(num_wrong > 100){
@@ -236,7 +236,8 @@ public:
   int ext_to_int[3]; // external index to internal index mapping
   int size_int[3]; // size of each dimension in internal indices
 
-  int groups, directions, zones, elements;
+  int groups, directions; 
+  ssize_t zones, elements;
   double *data_pointer;
   double *data_linear;
 };

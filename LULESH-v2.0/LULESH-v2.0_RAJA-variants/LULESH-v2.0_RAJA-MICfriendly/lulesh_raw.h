@@ -453,17 +453,6 @@ class Domain {
 
    Real_p elemMass ;  /* mass */
 
-   // Region information
-   Int_t    m_numReg ;
-   Int_t    m_cost; //imbalance cost
-   Index_p m_regElemSize ;   // Size of region sets
-   Index_p m_regNumList ;    // Region number per domain element
-   Index_p *m_regElemlist ;  // region indexset
-
-   // Permutation to pack element-centered material subsets
-   // into a contiguous range per material
-   Index_p m_perm ;
-
    // Cutoffs (treat as constants)
    const Real_t  m_e_cut ;             // energy tolerance 
    const Real_t  m_p_cut ;             // pressure tolerance 
@@ -515,6 +504,17 @@ class Domain {
 
    Index_t m_maxPlaneSize ;
    Index_t m_maxEdgeSize ;
+
+   // Region information
+   Int_t    m_numReg ;
+   Int_t    m_cost; //imbalance cost
+   Index_p m_regElemSize ;   // Size of region sets
+   Index_p m_regNumList ;    // Region number per domain element
+   Index_p *m_regElemlist ;  // region indexset
+
+   // Permutation to pack element-centered material subsets
+   // into a contiguous range per material
+   Index_p m_perm ;
 
    // OMP hack 
    Index_p m_nodeElemStart ;

@@ -85,8 +85,8 @@ namespace {
 
 
 Subdomain::Subdomain() :
-  idx_dir_set(0),
   idx_group_set(0),
+  idx_dir_set(0),
   idx_zone_set(0),
   num_groups(0),
   num_directions(0),
@@ -271,7 +271,7 @@ void Subdomain::randomizeData(void){
   sigt->randomizeData();
 
   for(int d = 0;d < 3;++ d){
-    for(int i = 0;i < deltas[d].size();++ i){
+    for(size_t i = 0;i < deltas[d].size();++ i){
       deltas[d][i] = drand48();
     }
   }

@@ -98,7 +98,7 @@ int SweepSolver (Grid_Data *grid_data, bool block_jacobi)
       if(true){
         // Create a list of all groups
         std::vector<int> sdom_list(grid_data->subdomains.size());
-        for(int i = 0;i < grid_data->subdomains.size();++ i){
+        for(size_t i = 0;i < grid_data->subdomains.size();++ i){
           sdom_list[i] = i;
         }
 
@@ -110,7 +110,7 @@ int SweepSolver (Grid_Data *grid_data, bool block_jacobi)
         for(int group_set = 0;group_set < grid_data->num_group_sets;++ group_set){
           std::vector<int> sdom_list;
           // Add all subdomains for this groupset
-          for(int s = 0;s < grid_data->subdomains.size();++ s){
+          for(size_t s = 0;s < grid_data->subdomains.size();++ s){
             if(grid_data->subdomains[s].idx_group_set == group_set){
               sdom_list.push_back(s);
             }
@@ -151,7 +151,7 @@ void SweepSubdomains (std::vector<int> subdomain_list, Grid_Data *grid_data, boo
   }
 
   // Add all subdomains in our list
-  for(int i = 0;i < subdomain_list.size();++ i){
+  for(size_t i = 0;i < subdomain_list.size();++ i){
     int sdom_id = subdomain_list[i];
     comm->addSubdomain(sdom_id, grid_data->subdomains[sdom_id]);
   }

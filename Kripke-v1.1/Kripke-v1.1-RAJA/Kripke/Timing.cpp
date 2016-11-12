@@ -170,7 +170,7 @@ void Timing::print(void) const {
   std::sort(names.begin(), names.end());
 
   std::vector<Timer const *> ord_timers;
-  for(int i = 0;i < names.size();++ i){
+  for(size_t i = 0;i < names.size();++ i){
     std::string &name = names[i];
     TimerMap::const_iterator iter = timers.find(name);
     ord_timers.push_back(&(*iter).second);
@@ -188,7 +188,7 @@ void Timing::print(void) const {
   printf("\n");
 
   // Dislpay timer results
-  for(int i = 0;i < names.size();++ i){
+  for(size_t i = 0;i < names.size();++ i){
     printf("  %-16s  %12d  %12.5lf", names[i].c_str(), (int)ord_timers[i]->count, ord_timers[i]->total_time);
 #ifdef KRIPKE_USE_PAPI
     for(int p = 0;p < num_papi;++ p){
@@ -201,7 +201,7 @@ void Timing::print(void) const {
   // Now display timers in machine readable format
   printf("\n");
   printf("TIMER_NAMES:");
-  for(int i = 0;i < names.size();++ i){
+  for(size_t i = 0;i < names.size();++ i){
     if(i > 0){
       printf(",");
     }
@@ -209,7 +209,7 @@ void Timing::print(void) const {
   }
   printf("\n");
   printf("TIMER_DATA:");
-  for(int i = 0;i < names.size();++ i){
+  for(size_t i = 0;i < names.size();++ i){
     if(i > 0){
       printf(",");
     }

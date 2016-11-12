@@ -1586,8 +1586,6 @@ void CalcLagrangeElements(Domain* domain)
 RAJA_STORAGE
 void CalcMonotonicQGradientsForElems(Domain* domain)
 {
-   Index_t numElem = domain->numElem();
-
    RAJA::forall<elem_exec_policy>(domain->getElemISet(), [=] (int i) {
       const Real_t ptiny = Real_t(1.e-36) ;
       Real_t ax,ay,az ;
@@ -2177,7 +2175,6 @@ void EvalEOSForElems(Domain* domain,
    Real_t rho0    = domain->refdens() ;
 
    LULESH_ISET& regISet = domain->getRegionISet(reg_num);
-   Int_t numElemReg = regISet.getLength();
  
    //loop to add load imbalance based on region number 
    for(Int_t j = 0; j < rep; j++) {
