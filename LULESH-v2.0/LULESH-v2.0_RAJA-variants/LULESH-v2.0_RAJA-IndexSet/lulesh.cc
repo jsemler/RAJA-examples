@@ -158,6 +158,8 @@ Additional BSD Notice
 #include "lulesh.h"
 #include "Timer.hxx"
 
+#include "RAJA/internal/defines.hxx"
+
 #define RAJA_STORAGE static inline
 //#define RAJA_STORAGE 
 
@@ -1450,7 +1452,7 @@ void CalcElemVelocityGradient( const Real_t* const xvel,
 
 //RAJA_STORAGE
 void CalcKinematicsForElems( Domain* domain,
-                             Real_t deltaTime, Index_t numElem )
+                             Real_t deltaTime, Index_t RAJA_NOT_USED(numElem) )
 {
 
   // loop over all elements
@@ -2121,7 +2123,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(Domain* domain,
                             Real_t *vnewc, Real_t rho0, Real_t *enewc,
                             Real_t *pnewc, Real_t *pbvc,
-                            Real_t *bvc, Real_t ss4o3,
+                            Real_t *bvc, Real_t RAJA_NOT_USED(ss4o3),
                             LULESH_ISET& regISet)
 {
    RAJA::forall<mat_exec_policy>(regISet,
@@ -2347,7 +2349,7 @@ void UpdateVolumesForElems(Domain* domain,
 /******************************************/
 
 RAJA_STORAGE
-void LagrangeElements(Domain* domain, Index_t numElem)
+void LagrangeElements(Domain* domain, Index_t RAJA_NOT_USED(numElem))
 {
   CalcLagrangeElements(domain) ;
 

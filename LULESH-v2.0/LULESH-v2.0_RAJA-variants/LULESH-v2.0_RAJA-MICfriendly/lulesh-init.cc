@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include "lulesh.h"
 
+#include "RAJA/internal/defines.hxx"
+
 /////////////////////////////////////////////////////////////////////
 Domain::Domain(Int_t numRanks, Index_t colLoc,
                Index_t rowLoc, Index_t planeLoc,
@@ -425,7 +427,7 @@ Domain::SetupThreadSupportStructures()
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-Domain::SetupCommBuffers(Index_t edgeNodes)
+Domain::SetupCommBuffers(Index_t RAJA_NOT_USED(edgeNodes))
 {
   // allocate a buffer large enough for nodal ghost data 
   Index_t maxEdgeSize = MAX(this->sizeX(), MAX(this->sizeY(), this->sizeZ()))+1 ;

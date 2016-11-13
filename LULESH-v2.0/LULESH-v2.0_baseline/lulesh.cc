@@ -2188,7 +2188,8 @@ void CalcSoundSpeedForElems(Domain &domain,
                             Real_t *bvc, Real_t ss4o3,
                             Index_t len, Index_t *regElemList)
 {
-#pragma omp parallel for firstprivate(rho0, ss4o3)
+   (void) ss4o3;
+#pragma omp parallel for firstprivate(rho0)
    for (Index_t i = 0; i < len ; ++i) {
       Index_t ielem = regElemList[i];
       Real_t ssTmp = (pbvc[i] * enewc[i] + vnewc[ielem] * vnewc[ielem] *

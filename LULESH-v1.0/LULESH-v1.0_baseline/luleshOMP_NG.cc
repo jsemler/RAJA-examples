@@ -2541,7 +2541,8 @@ void CalcSoundSpeedForElems(Real_t *vnewc, Real_t rho0, Real_t *enewc,
                             Real_t *pnewc, Real_t *pbvc,
                             Real_t *bvc, Real_t ss4o3, Index_t nz)
 {
-#pragma omp parallel for firstprivate(nz, rho0, ss4o3)
+(void) ss4o3;
+#pragma omp parallel for firstprivate(nz, rho0)
    for (Index_t i = 0; i < nz ; ++i) {
       Index_t iz = domain.matElemlist(i);
       Real_t ssTmp = (pbvc[iz] * enewc[iz] + vnewc[iz] * vnewc[iz] *
@@ -2874,6 +2875,9 @@ void LagrangeLeapFrog()
 
 int main(int argc, char *argv[])
 {
+   (void) argc;
+   (void) argv;
+
    RAJA::Timer timer_main;
    RAJA::Timer timer_cycle;
 

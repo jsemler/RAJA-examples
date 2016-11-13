@@ -164,7 +164,7 @@ Additional BSD Notice
 
 #include "Timer.hxx"
 
-
+#include "RAJA/internal/defines.hxx"
 
 #define RAJA_STORAGE static inline
 
@@ -2206,7 +2206,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(Domain* domain,
                             Real_t *vnewc, Real_t rho0, Real_t *enewc,
                             Real_t *pnewc, Real_t *pbvc,
-                            Real_t *bvc, Real_t ss4o3,
+                            Real_t *bvc, Real_t RAJA_NOT_USED(ss4o3),
                             Index_t len, Index_t *regElemList)
 {
   

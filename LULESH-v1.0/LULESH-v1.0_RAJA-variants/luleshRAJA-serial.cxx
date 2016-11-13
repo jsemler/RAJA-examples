@@ -70,6 +70,8 @@ Additional BSD Notice
 
 #include "RAJA/RAJA.hxx"
 
+#include "RAJA/internal/defines.hxx"
+
 #include "RAJA/IndexSetBuilders.hxx"
 
 #include "Timer.hxx"
@@ -2328,7 +2330,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(RAJA::IndexSet *matElemList, Real_p ss,
                             Real_p vnewc, Real_t rho0, Real_p enewc,
                             Real_p pnewc, Real_p pbvc,
-                            Real_p bvc, Real_t ss4o3)
+                            Real_p bvc, Real_t RAJA_NOT_USED(ss4o3))
 {
    RAJA::forall<mat_exec_policy>( *matElemList, [=] (int iz) {
       Real_t ssTmp = (pbvc[iz] * enewc[iz] + vnewc[iz] * vnewc[iz] *

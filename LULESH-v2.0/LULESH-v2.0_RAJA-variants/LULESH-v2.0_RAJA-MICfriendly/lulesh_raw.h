@@ -282,15 +282,15 @@ class Domain {
    Index_t nodeElemCount(Index_t idx)
    { return m_nodeElemStart[idx+1] - m_nodeElemStart[idx] ; }
 
-   Index_p nodeElemCornerList(Index_t idx)
+   Index_t* nodeElemCornerList(Index_t idx)
    { return &m_nodeElemCornerList[m_nodeElemStart[idx]] ; }
 
    // Region Centered
 
    Index_t&  regElemSize(Index_t idx) { return m_regElemSize[idx] ; }
    Index_t&  regNumList(Index_t idx) { return m_regNumList[idx] ; }
-   Index_p   regNumList()            { return &m_regNumList[0] ; }
-   Index_p   regElemlist(Int_t r)    { return m_regElemlist[r] ; }
+   Index_t*  regNumList()            { return &m_regNumList[0] ; }
+   Index_t*  regElemlist(Int_t r)    { return m_regElemlist[r] ; }
    Index_t&  regElemlist(Int_t r, Index_t idx) { return m_regElemlist[r][idx] ; }
 
    // Parameters 

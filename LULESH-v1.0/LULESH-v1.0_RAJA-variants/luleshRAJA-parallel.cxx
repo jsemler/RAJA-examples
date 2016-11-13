@@ -70,6 +70,8 @@ Additional BSD Notice
 
 #include "RAJA/RAJA.hxx"
 
+#include "RAJA/internal/defines.hxx"
+
 #include "RAJA/IndexSetBuilders.hxx"
 
 #include "Timer.hxx"
@@ -658,10 +660,10 @@ void IntegrateStressForElems( Index_p nodelist,
                               Real_p fx, Real_p fy, Real_p fz,
                               Real_p sigxx, Real_p sigyy, Real_p sigzz,
                               Real_p determ,
-                              RAJA::IndexSet *domElemList,
-                              RAJA::IndexSet *domNodeList
+                              RAJA::IndexSet *domElemList
 #if defined(OMP_FINE_SYNC)
-                             ,Index_t numElem, Index_p nodeElemStart,
+                             ,RAJA::IndexSet * domNodeList,
+                              Index_t numElem, Index_p nodeElemStart,
                               Index_p nodeElemCornerList
 #endif
                             )
@@ -1067,10 +1069,10 @@ void CalcFBHourglassForceForElems( Index_p nodelist,
                                    Real_p  x8n, Real_p  y8n, Real_p  z8n,
                                    Real_p  dvdx, Real_p  dvdy, Real_p  dvdz,
                                    Real_t hourg, 
-                                   RAJA::IndexSet *domElemList,
-                                   RAJA::IndexSet *domNodeList
+                                   RAJA::IndexSet *domElemList
 #if defined(OMP_FINE_SYNC)
-                                  ,Index_t numElem, Index_p nodeElemStart,
+                                  ,RAJA::IndexSet * domNodeList,
+                                   Index_t numElem, Index_p nodeElemStart,
                                    Index_p nodeElemCornerList
 #endif
                                  )
@@ -1338,9 +1340,10 @@ void CalcHourglassControlForElems(Domain *domain,
                                     x8n, y8n, z8n, 
                                     dvdx, dvdy, dvdz,
                                     hgcoef,
-                                    domain->domElemList, domain->domNodeList
+                                    domain->domElemList
 #if defined(OMP_FINE_SYNC)
-                                   ,numElem, domain->nodeElemStart,
+                                   ,domain->domNodeList,
+                                    numElem, domain->nodeElemStart,
                                     domain->nodeElemCornerList
 #endif
                                   ) ;
@@ -1381,10 +1384,10 @@ void CalcVolumeForceForElems(Domain *domain)
                                sigyy,
                                sigzz,
                                determ,
-                               domain->domElemList, 
-                               domain->domNodeList
+                               domain->domElemList
 #if defined(OMP_FINE_SYNC)
-                              ,numElem, domain->nodeElemStart,
+                              ,domain->domNodeList,
+                               numElem, domain->nodeElemStart,
                                domain->nodeElemCornerList
 #endif
                              ) ;
@@ -2434,7 +2437,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(RAJA::IndexSet *matElemList, Real_p ss,
                             Real_p vnewc, Real_t rho0, Real_p enewc,
                             Real_p pnewc, Real_p pbvc,
-                            Real_p bvc, Real_t ss4o3)
+                            Real_p bvc, Real_t RAJA_NOT_USED(ss4o3))
 {
    RAJA::forall<mat_exec_policy>( *matElemList, [=] RAJA_DEVICE (int iz) {
       Real_t ssTmp = (pbvc[iz] * enewc[iz] + vnewc[iz] * vnewc[iz] *

@@ -4,6 +4,8 @@
 #include <math.h>
 #include "lulesh.h"
 
+#include "RAJA/internal/defines.hxx"
+
 #if defined(VIZ_MESH)
 
 #ifdef __cplusplus
@@ -421,7 +423,8 @@ LULESH_PMPIO_Close(void *file, void *udata)
    
 #else
 
-void DumpToVisit(Domain& domain, int numFiles, int myRank, int numRanks)
+void DumpToVisit(Domain& RAJA_NOT_USED(domain), int RAJA_NOT_USED(numFiles), 
+                 int myRank, int RAJA_NOT_USED(numRanks))
 {
    if (myRank == 0) {
       printf("Must enable -DVIZ_MESH at compile time to call DumpDomain\n");
