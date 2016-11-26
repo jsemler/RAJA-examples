@@ -423,8 +423,8 @@ LULESH_PMPIO_Close(void *file, void *udata)
    
 #else
 
-void DumpToVisit(Domain& RAJA_NOT_USED(domain), int RAJA_NOT_USED(numFiles), 
-                 int myRank, int RAJA_NOT_USED(numRanks))
+void DumpToVisit(Domain& RAJA_UNUSED_ARG(domain), int RAJA_UNUSED_ARG(numFiles), 
+                 int myRank, int RAJA_UNUSED_ARG(numRanks))
 {
    if (myRank == 0) {
       printf("Must enable -DVIZ_MESH at compile time to call DumpDomain\n");

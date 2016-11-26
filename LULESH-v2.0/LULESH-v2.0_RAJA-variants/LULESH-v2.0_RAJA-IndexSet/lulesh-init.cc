@@ -435,7 +435,7 @@ Domain::SetupThreadSupportStructures()
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-Domain::SetupCommBuffers(Index_t RAJA_NOT_USED(edgeNodes))
+Domain::SetupCommBuffers(Index_t RAJA_UNUSED_ARG(edgeNodes))
 {
   // allocate a buffer large enough for nodal ghost data 
   Index_t maxEdgeSize = MAX(this->sizeX(), MAX(this->sizeY(), this->sizeZ()))+1 ;

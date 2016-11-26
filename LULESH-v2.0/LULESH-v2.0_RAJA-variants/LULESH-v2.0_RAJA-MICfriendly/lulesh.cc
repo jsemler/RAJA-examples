@@ -1482,7 +1482,7 @@ void CalcElemVelocityGradient( const Real_t* const xvel,
 
 //RAJA_STORAGE
 void CalcKinematicsForElems( Domain* domain,
-                             Real_t deltaTime, Index_t RAJA_NOT_USED(numElem) )
+                             Real_t deltaTime, Index_t RAJA_UNUSED_ARG(numElem) )
 {
 
   // loop over all elements
@@ -2139,7 +2139,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(Domain* domain,
                             Real_t *vnewc, Real_t rho0, Real_t *enewc,
                             Real_t *pnewc, Real_t *pbvc,
-                            Real_t *bvc, Real_t RAJA_NOT_USED(ss4o3),
+                            Real_t *bvc, Real_t RAJA_UNUSED_ARG(ss4o3),
                             LULESH_ISET& regISet)
 {
    RAJA::forall<mat_exec_policy>(regISet, [=] (int ielem) {
@@ -2348,7 +2348,7 @@ void UpdateVolumesForElems(Domain* domain,
 /******************************************/
 
 RAJA_STORAGE
-void LagrangeElements(Domain* domain, Index_t RAJA_NOT_USED(numElem))
+void LagrangeElements(Domain* domain, Index_t RAJA_UNUSED_ARG(numElem))
 {
   CalcLagrangeElements(domain) ;
 

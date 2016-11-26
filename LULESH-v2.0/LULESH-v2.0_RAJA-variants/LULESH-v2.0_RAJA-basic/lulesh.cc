@@ -2206,7 +2206,7 @@ RAJA_STORAGE
 void CalcSoundSpeedForElems(Domain* domain,
                             Real_t *vnewc, Real_t rho0, Real_t *enewc,
                             Real_t *pnewc, Real_t *pbvc,
-                            Real_t *bvc, Real_t RAJA_NOT_USED(ss4o3),
+                            Real_t *bvc, Real_t RAJA_UNUSED_ARG(ss4o3),
                             Index_t len, Index_t *regElemList)
 {
   
