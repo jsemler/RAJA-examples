@@ -69,7 +69,7 @@ Additional BSD Notice
 #include <string.h>
 #include <ctype.h>
 
-#include "Timer.hxx"
+#include "RAJA/Timer.hxx"
 
 int show_run_progress = 0 ;
 

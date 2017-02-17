@@ -70,7 +70,7 @@ Additional BSD Notice
 
 #include "RAJA/RAJA.hxx"
 
-#include "Timer.hxx"
+#include "RAJA/Timer.hxx"
 
 /*
  ***********************************************

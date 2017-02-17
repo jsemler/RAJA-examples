@@ -74,7 +74,7 @@ Additional BSD Notice
 
 #include "RAJA/IndexSetBuilders.hxx"
 
-#include "Timer.hxx"
+#include "RAJA/Timer.hxx"
 
 
 /*
