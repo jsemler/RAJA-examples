@@ -161,7 +161,7 @@ Additional BSD Notice
 
 #include "lulesh.h"
 
-#include "Timer.hxx"
+#include "RAJA/Timer.hxx"
 
 /******************************************/
 
