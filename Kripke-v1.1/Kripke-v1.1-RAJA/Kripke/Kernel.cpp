@@ -140,12 +140,12 @@ struct Kernel_LTimes{
     using ELL = typename POL::View_Ell; 
     
     // Zero Phi
-    FORALL_ZONESETS(seq_pol, domain, sdom_id, sdom)
+    FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
       sdom.phi->clear(0.0);
     END_FORALL
 
     // Loop over Subdomains
-    FORALL_SUBDOMAINS(seq_pol, domain, sdom_id, sdom)
+    FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
 
       // Get dimensioning
       int group0 = sdom.group0;
@@ -195,12 +195,12 @@ struct Kernel_LPlusTimes {
     using ELL_PLUS = typename POL::View_EllPlus;
 
     // Zero Phi
-    FORALL_SUBDOMAINS(seq_pol, domain, sdom_id, sdom)
+    FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
       sdom.rhs->clear(0.0);
     END_FORALL
 
     // Loop over Subdomains
-    FORALL_SUBDOMAINS(seq_pol, domain, sdom_id, sdom)
+    FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
 
       // Get dimensioning
       int group0 = sdom.group0;
@@ -253,12 +253,12 @@ struct Kernel_Scattering{
     typedef DataPolicy<nest_type> POL;
 
     // Zero out source terms
-    FORALL_ZONESETS(seq_pol, domain, sdom_id, sdom)
+    FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
       sdom.phi_out->clear(0.0);
     END_FORALL
 
     // Loop over zoneset subdomains
-    FORALL_ZONESETS(seq_pol, domain, sdom_id, sdom)
+    FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
 
       typename POL::View_Phi     phi    (domain, sdom_id, sdom.phi->ptr());
       typename POL::View_Phi     phi_out(domain, sdom_id, sdom.phi_out->ptr());
@@ -321,7 +321,7 @@ struct Kernel_Source {
     typedef DataPolicy<nest_type> POL;
 
     // Loop over zoneset subdomains
-    FORALL_ZONESETS(seq_pol, domain, sdom_id, sdom)
+    FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
       typename POL::View_Phi             phi_out       (domain, sdom_id, sdom.phi_out->ptr());
       typename POL::View_MixedToZones    mixed_to_zones(domain, sdom_id, (IZone*)&sdom.mixed_to_zones[0]);
       typename POL::View_MixedToMaterial mixed_material(domain, sdom_id, (IMaterial*)&sdom.mixed_material[0]);
@@ -476,7 +476,7 @@ struct Kernel_ParticleEdit {
     RAJA::ReduceSum<typename POL::reduce_policy, double> part_reduce(0.0);
        
     // Loop over zoneset subdomains
-    FORALL_SUBDOMAINS(seq_pol, domain, sdom_id, sdom)
+    FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
       typename POL::View_Psi         psi      (domain, sdom_id, sdom.psi->ptr());
       typename POL::View_Directions  direction(domain, sdom_id, sdom.directions);
       typename POL::View_Volume      volume   (domain, sdom_id, &sdom.volume[0]);
