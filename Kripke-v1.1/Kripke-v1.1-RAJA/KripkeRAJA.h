@@ -72,10 +72,10 @@ RAJA_INLINE void forallZoneSets(Grid_Data *grid_data, BODY body){
 
 
 #define FORALL_SUBDOMAINS(SDOM_POL, DOMAIN, ID, SDOM) \
-  forallSubdomains<SDOM_POL>(DOMAIN, [&](int ID, Subdomain &SDOM){
+  forallSubdomains<SDOM_POL>(&DOMAIN, [&](int ID, Subdomain &SDOM){
 
 #define FORALL_ZONESETS(SDOM_POL, DOMAIN, ID, SDOM) \
-  forallZoneSets<SDOM_POL>(DOMAIN, [&](int zone_set, int ID, Subdomain &SDOM){
+  forallZoneSets<SDOM_POL>(&DOMAIN, [&](int zone_set, int ID, Subdomain &SDOM){
 
 
 #define END_FORALL });
