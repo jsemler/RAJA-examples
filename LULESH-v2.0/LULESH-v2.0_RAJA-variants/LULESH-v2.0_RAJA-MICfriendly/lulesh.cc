@@ -510,9 +510,9 @@ void IntegrateStressForElems( Domain* domain,
 #endif
 
    Index_t numElem8 = numElem * 8 ;
-   Real_t *fx_elem;
-   Real_t *fy_elem;
-   Real_t *fz_elem;
+   Real_t *fx_elem = nullptr;
+   Real_t *fy_elem = nullptr;
+   Real_t *fz_elem = nullptr;
    Real_t fx_local[8] ;
    Real_t fy_local[8] ;
    Real_t fz_local[8] ;
@@ -736,9 +736,9 @@ void CalcFBHourglassForceForElems( Domain* domain,
   
    Index_t numElem8 = numElem * 8 ;
 
-   Real_t *fx_elem; 
-   Real_t *fy_elem; 
-   Real_t *fz_elem; 
+   Real_t *fx_elem = nullptr; 
+   Real_t *fy_elem = nullptr; 
+   Real_t *fz_elem = nullptr; 
 
    if(numthreads > 1) {
       fx_elem = Allocate<Real_t>(numElem8) ;

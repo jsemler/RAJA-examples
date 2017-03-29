@@ -14,7 +14,7 @@
 template <typename T>
 inline T *Allocate(size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    cudaErrchk( cudaMallocManaged((void **)&retVal, sizeof(T)*size, cudaMemAttachGlobal) ) ;
    return retVal ;
 }
@@ -22,7 +22,7 @@ inline T *Allocate(size_t size)
 template <typename EXEC_POLICY_T, typename T>
 inline T *AllocateTouch(RAJA::IndexSet *is, size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    cudaErrchk( cudaMallocManaged((void **)&retVal, sizeof(T)*size, cudaMemAttachGlobal) ) ;
    cudaMemset(retVal,0,sizeof(T)*size);
    return retVal ;
@@ -55,7 +55,7 @@ inline void Release(T * __restrict__ *ptr)
 template <typename T>
 inline T *Allocate(size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    posix_memalign((void **)&retVal, RAJA::DATA_ALIGN, sizeof(T)*size);
 // memset(retVal,0,sizeof(T)*size);
    return retVal ;
@@ -64,7 +64,7 @@ inline T *Allocate(size_t size)
 template <typename EXEC_POLICY_T, typename T>
 inline T *AllocateTouch(RAJA::IndexSet *is, size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    posix_memalign((void **)&retVal, RAJA::DATA_ALIGN, sizeof(T)*size);
 
    /* we should specialize by policy type here */
@@ -114,7 +114,7 @@ public:
    }
 
    VARTYPE *allocate(int len) {
-      VARTYPE *retVal ;
+      VARTYPE *retVal = nullptr;
       int i ;
       for (i=0; i<32; ++i) {
          if (lenType[i] == len) {

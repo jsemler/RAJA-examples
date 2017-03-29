@@ -2001,7 +2001,8 @@ void CalcMonotonicQRegionForElems(// parameters
       Real_t phixi, phieta, phizeta ;
       Index_t i = mesh.matElemlist(ielem);
       Int_t bcMask = mesh.elemBC(i) ;
-      Real_t delvm, delvp ;
+      Real_t delvm = Real_t(0.0);
+      Real_t delvp = Real_t(0.0);
 
       /*  phixi     */
       Real_t norm = Real_t(1.) / ( mesh.delv_xi(i) + ptiny ) ;
