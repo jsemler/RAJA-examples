@@ -46,7 +46,7 @@ inline void Release(T **ptr)
 template <typename T>
 inline T *Allocate(size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    posix_memalign((void **)&retVal, RAJA::DATA_ALIGN, sizeof(T)*size);
 // memset(retVal,0,sizeof(T)*size);
    return retVal ;
@@ -55,7 +55,7 @@ inline T *Allocate(size_t size)
 template <typename EXEC_POLICY_T, typename T>
 inline T *AllocateTouch(RAJA::IndexSet *is, size_t size)
 {
-   T *retVal ;
+   T *retVal = nullptr;
    posix_memalign((void **)&retVal, RAJA::DATA_ALIGN, sizeof(T)*size);
 
    /* we should specialize by policy type here */

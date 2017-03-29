@@ -2057,7 +2057,8 @@ void CalcMonotonicQRegionForElems(
       Real_t qlin, qquad ;
       Real_t phixi, phieta, phizeta ;
       Int_t bcMask = elemBC[i] ;
-      Real_t delvm, delvp ;
+      Real_t delvm = Real_t(0.0);
+      Real_t delvp = Real_t(0.0);
 
       /*  phixi     */
       Real_t norm = Real_t(1.) / ( delv_xi[i] + ptiny ) ;
