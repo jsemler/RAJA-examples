@@ -1,6 +1,8 @@
 include_directories(..)
 
-add_definitions(-DRAJA_ENABLE_NESTED)
+if (NOT RAJA_ENABLE_NESTED)
+  add_definitions(-DRAJA_ENABLE_NESTED)
+endif ()
 
 set(KRIPKE_SRC 
     Directions.cpp  
@@ -25,16 +27,12 @@ set(KRIPKE_SRC
     
     Test/TestKernels.cpp)
 
-if(RAJA_ENABLE_CUDA)
-  cuda_add_library(lib_kripke_raja ${KRIPKE_SRC})  
-else()
-  add_library(lib_kripke_raja ${KRIPKE_SRC})  
-endif()  
+raja_add_library(
+  NAME lib_kripke_raja 
+  SOURCES ${KRIPKE_SRC})  
+add_dependencies(lib_kripke_raja RAJA)
                                                                                                           
 list(APPEND KRIPKE_LIBS lib_kripke_raja) 
-
-add_dependencies(lib_kripke_raja RAJA)
-
 
 # Propagate to parent directory
 set(KRIPKE_LIBS ${KRIPKE_LIBS} PARENT_SCOPE) 

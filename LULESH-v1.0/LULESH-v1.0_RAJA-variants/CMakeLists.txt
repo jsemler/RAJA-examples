@@ -46,24 +46,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if (RAJA_ENABLE_CUDA)
   add_definitions(-DUSE_CASE=9)
-  cuda_add_executable(lulesh-RAJA-parallel.exe
-    luleshRAJA-parallel.cxx)
-else()
-    add_executable(lulesh-RAJA-parallel.exe
-      luleshRAJA-parallel.cxx)
+endif()
 
-  add_executable(lulesh-RAJA-serial.exe
+raja_add_executable(
+  NAME lulesh-RAJA-parallel.exe
+  SOURCES luleshRAJA-parallel.cxx
+  DEPENDS_ON ${RT_LIBRARIES})
+
+if (NOT RAJA_ENABLE_CUDA)
+  add_executable(
+    lulesh-RAJA-serial.exe
     luleshRAJA-serial.cxx)
-
-  add_dependencies(lulesh-RAJA-serial.exe RAJA)
-
   target_link_libraries(lulesh-RAJA-serial.exe
    RAJA
    ${RT_LIBRARIES})
-endif()
+ endif ()
 
-add_dependencies(lulesh-RAJA-parallel.exe RAJA)
-
-target_link_libraries(lulesh-RAJA-parallel.exe
-  RAJA
-  ${RT_LIBRARIES})
