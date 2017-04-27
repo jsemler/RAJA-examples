@@ -253,7 +253,7 @@ int main(int argc, char **argv) {
 #ifdef __bgq__
       int core = Kernel_ProcessorCoreID();
 #else
-      int core = sched_getcpu();
+      int core = 0;
 #endif
       printf("Rank: %d Thread %d: Core %d\n", myid, tid, core);
     }

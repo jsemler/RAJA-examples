@@ -151,9 +151,9 @@ struct Kernel_LTimes{
       int group0 = sdom.group0;
 
       // Get pointers
-      PSI psi(domain, sdom_id, sdom.psi->ptr());
-      PHI phi(domain, sdom_id, sdom.phi->ptr());
-      ELL ell(domain, sdom_id, sdom.ell->ptr());
+      PSI psi(domain, sdom_id, sdom.psi->ptr(), POL::perm_psi_phi::value);
+      PHI phi(domain, sdom_id, sdom.phi->ptr(), POL::perm_psi_phi::value);
+      ELL ell(domain, sdom_id, sdom.ell->ptr(), POL::perm_ell::value);
 
 #ifdef KRIPKE_USE_FUNCTORS
       dForallN<LTimesPolicy<nest_type>, IMoment, IDirection, IGroup, IZone>(
@@ -206,9 +206,9 @@ struct Kernel_LPlusTimes {
       int group0 = sdom.group0;
 
       // Get pointers
-      PSI      rhs     (domain, sdom_id, sdom.rhs->ptr());
-      PHI      phi_out (domain, sdom_id, sdom.phi_out->ptr());
-      ELL_PLUS ell_plus(domain, sdom_id, sdom.ell_plus->ptr());
+      PSI      rhs     (domain, sdom_id, sdom.rhs->ptr(), POL::perm_psi_phi::value);
+      PHI      phi_out (domain, sdom_id, sdom.phi_out->ptr(), POL::perm_psi_phi::value);
+      ELL_PLUS ell_plus(domain, sdom_id, sdom.ell_plus->ptr(), POL::perm_ellplus::value);
 
 #ifdef KRIPKE_USE_FUNCTORS
       dForallN<LPlusTimesPolicy<nest_type>, IMoment, IDirection, IGroup, IZone>(
@@ -260,14 +260,14 @@ struct Kernel_Scattering{
     // Loop over zoneset subdomains
     FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
 
-      typename POL::View_Phi     phi    (domain, sdom_id, sdom.phi->ptr());
-      typename POL::View_Phi     phi_out(domain, sdom_id, sdom.phi_out->ptr());
-      typename POL::View_SigS    sigs   (domain, sdom_id, domain.sigs->ptr());
+      typename POL::View_Phi     phi    (domain, sdom_id, sdom.phi->ptr(), POL::perm_psi_phi::value);
+      typename POL::View_Phi     phi_out(domain, sdom_id, sdom.phi_out->ptr(), POL::perm_psi_phi::value);
+      typename POL::View_SigS    sigs   (domain, sdom_id, domain.sigs->ptr(), POL::perm_sigs::value);
 
-      typename POL::View_MixedToZones    mixed_to_zones (domain, sdom_id, (IZone*)&sdom.mixed_to_zones[0]);
-      typename POL::View_MixedToMaterial mixed_material (domain, sdom_id, (IMaterial*)&sdom.mixed_material[0]);
-      typename POL::View_MixedToFraction mixed_fraction (domain, sdom_id, &sdom.mixed_fraction[0]);
-      typename POL::View_MomentToCoeff   moment_to_coeff(domain, sdom_id, (ILegendre*)&domain.moment_to_coeff[0]);
+      typename POL::View_MixedToZones    mixed_to_zones (domain, sdom_id, (IZone*)&sdom.mixed_to_zones[0], RAJA::PERM_I::value);
+      typename POL::View_MixedToMaterial mixed_material (domain, sdom_id, (IMaterial*)&sdom.mixed_material[0], RAJA::PERM_I::value);
+      typename POL::View_MixedToFraction mixed_fraction (domain, sdom_id, &sdom.mixed_fraction[0], RAJA::PERM_I::value);
+      typename POL::View_MomentToCoeff   moment_to_coeff(domain, sdom_id, (ILegendre*)&domain.moment_to_coeff[0], RAJA::PERM_I::value);
 
 #ifdef KRIPKE_USE_FUNCTORS
       dForallN<ScatteringPolicy<nest_type>, IMoment, IGlobalGroup, IGlobalGroup, IMix>(
@@ -322,10 +322,10 @@ struct Kernel_Source {
 
     // Loop over zoneset subdomains
     FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
-      typename POL::View_Phi             phi_out       (domain, sdom_id, sdom.phi_out->ptr());
-      typename POL::View_MixedToZones    mixed_to_zones(domain, sdom_id, (IZone*)&sdom.mixed_to_zones[0]);
-      typename POL::View_MixedToMaterial mixed_material(domain, sdom_id, (IMaterial*)&sdom.mixed_material[0]);
-      typename POL::View_MixedToFraction mixed_fraction(domain, sdom_id, &sdom.mixed_fraction[0]);
+      typename POL::View_Phi             phi_out       (domain, sdom_id, sdom.phi_out->ptr(), POL::perm_psi_phi::value);
+      typename POL::View_MixedToZones    mixed_to_zones(domain, sdom_id, (IZone*)&sdom.mixed_to_zones[0], RAJA::PERM_I::value);
+      typename POL::View_MixedToMaterial mixed_material(domain, sdom_id, (IMaterial*)&sdom.mixed_material[0], RAJA::PERM_I::value);
+      typename POL::View_MixedToFraction mixed_fraction(domain, sdom_id, &sdom.mixed_fraction[0], RAJA::PERM_I::value);
 
 #ifdef KRIPKE_USE_FUNCTORS
       dForallN<SourcePolicy<nest_type>, IGlobalGroup, IMix>(
@@ -372,28 +372,28 @@ struct Kernel_Sweep{
 
     Subdomain *sdom = &domain.subdomains[sdom_id];
 
-    typename POL::View_Directions direction(domain, sdom_id, sdom->directions);
+    typename POL::View_Directions direction(domain, sdom_id, sdom->directions, RAJA::PERM_I::value);
 
-    typename POL::View_Psi     rhs (domain, sdom_id, sdom->rhs->ptr());
-    typename POL::View_Psi     psi (domain, sdom_id, sdom->psi->ptr());
-    typename POL::View_SigT    sigt(domain, sdom_id, sdom->sigt->ptr());
+    typename POL::View_Psi     rhs (domain, sdom_id, sdom->rhs->ptr(), POL::perm_psi_phi::value);
+    typename POL::View_Psi     psi (domain, sdom_id, sdom->psi->ptr(), POL::perm_psi_phi::value);
+    typename POL::View_SigT    sigt(domain, sdom_id, sdom->sigt->ptr(), POL::perm_sigt::value);
 
-    typename POL::View_dx      dx(domain, sdom_id, &sdom->deltas[0][0]);
-    typename POL::View_dy      dy(domain, sdom_id, &sdom->deltas[1][0]);
-    typename POL::View_dz      dz(domain, sdom_id, &sdom->deltas[2][0]);
+    typename POL::View_dx      dx(domain, sdom_id, &sdom->deltas[0][0], RAJA::PERM_I::value);
+    typename POL::View_dy      dy(domain, sdom_id, &sdom->deltas[1][0], RAJA::PERM_I::value);
+    typename POL::View_dz      dz(domain, sdom_id, &sdom->deltas[2][0], RAJA::PERM_I::value);
 
-    typename POL::TLayout_Zone zone_layout(domain, sdom_id);
+    typename POL::TLayout_Zone zone_layout(domain, sdom_id, POL::perm_tlayout::value);
 
-    typename POL::View_FaceI face_lf(domain, sdom_id, sdom->plane_data[0]->ptr());
-    typename POL::View_FaceJ face_fr(domain, sdom_id, sdom->plane_data[1]->ptr());
-    typename POL::View_FaceK face_bo(domain, sdom_id, sdom->plane_data[2]->ptr());
+    typename POL::View_FaceI face_lf(domain, sdom_id, sdom->plane_data[0]->ptr(), POL::perm_face::value);
+    typename POL::View_FaceJ face_fr(domain, sdom_id, sdom->plane_data[1]->ptr(), POL::perm_face::value);
+    typename POL::View_FaceK face_bo(domain, sdom_id, sdom->plane_data[2]->ptr(), POL::perm_face::value);
 
     // All directions have same id,jd,kd, since these are all one Direction Set
     // So pull that information out now
     Grid_Sweep_Block const &extent = sdom->sweep_block;
-    typename POL::View_IdxToI  idx_to_i(domain, sdom_id, (IZoneI*)&extent.idx_to_i[0]);
-    typename POL::View_IdxToJ  idx_to_j(domain, sdom_id, (IZoneJ*)&extent.idx_to_j[0]);
-    typename POL::View_IdxToK  idx_to_k(domain, sdom_id, (IZoneK*)&extent.idx_to_k[0]);
+    typename POL::View_IdxToI  idx_to_i(domain, sdom_id, (IZoneI*)&extent.idx_to_i[0], RAJA::PERM_I::value);
+    typename POL::View_IdxToJ  idx_to_j(domain, sdom_id, (IZoneJ*)&extent.idx_to_j[0], RAJA::PERM_I::value);
+    typename POL::View_IdxToK  idx_to_k(domain, sdom_id, (IZoneK*)&extent.idx_to_k[0], RAJA::PERM_I::value);
 
 #ifdef KRIPKE_USE_FUNCTORS
     RAJA::forallN<SweepPolicy<nest_type>, IDirection, IGroup, IZoneIdx>( 
@@ -432,7 +432,7 @@ struct Kernel_Sweep{
         double const ycos_dyj = 2.0 * direction(d).ycos / dy(j+1);
         double const zcos_dzk = 2.0 * direction(d).zcos / dz(k+1);
 
-        IZone z = zone_layout(i,j,k);
+        IZone z{zone_layout(i,j,k)};
 
         // Calculate new zonal flux
         double const psi_d_g_z = (
@@ -477,9 +477,9 @@ struct Kernel_ParticleEdit {
        
     // Loop over zoneset subdomains
     FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
-      typename POL::View_Psi         psi      (domain, sdom_id, sdom.psi->ptr());
-      typename POL::View_Directions  direction(domain, sdom_id, sdom.directions);
-      typename POL::View_Volume      volume   (domain, sdom_id, &sdom.volume[0]);
+      typename POL::View_Psi         psi      (domain, sdom_id, sdom.psi->ptr(), POL::perm_psi_phi::value);
+      typename POL::View_Directions  direction(domain, sdom_id, sdom.directions, RAJA::PERM_I::value);
+      typename POL::View_Volume      volume   (domain, sdom_id, &sdom.volume[0], RAJA::PERM_I::value);
 
       
 #ifdef KRIPKE_USE_FUNCTORS

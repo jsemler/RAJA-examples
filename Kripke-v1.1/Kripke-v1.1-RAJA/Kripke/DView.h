@@ -4,21 +4,31 @@
 #include<string>
 #include<Kripke.h>
 
+#include "RAJA/RAJA.hxx"
 
-template<typename IdxLin, typename Perm, typename ... Idxs>
-struct DLayout : public RAJA::Layout<IdxLin, Perm, Idxs...>{
+template<typename IdxLin, typename ...Idxs>
+struct DLayout : public RAJA::TypedLayout<IdxLin, Idxs...>{
+  using Base = RAJA::TypedLayout<IdxLin, Idxs...>;
+  using IndexLinear = typename Base::IndexLinear;
 
+  constexpr static size_t n_dims = sizeof...(Idxs);
 
   
   inline DLayout(Grid_Data &domain, int sdom_id) :
-    RAJA::Layout<IdxLin, Perm, Idxs...>(
-          domain.indexSize<Idxs>(sdom_id)...)
+    Base{domain.indexSize<Idxs>(sdom_id)...}
+  {}
+
+  template<typename IS>
+  inline DLayout(Grid_Data &domain, int sdom_id, IS perm) :
+    Base{RAJA::make_permuted_layout<n_dims>(
+            {domain.indexSize<Idxs>(sdom_id)...},
+            perm)}
   {}
 
   template<typename ... ARGS>
   RAJA_HOST_DEVICE
   inline DLayout(ARGS ... args) :
-    RAJA::Layout<IdxLin, Perm, Idxs...>(args...)
+    Base{args...}
   {}
 
 };
@@ -27,15 +37,29 @@ struct DLayout : public RAJA::Layout<IdxLin, Perm, Idxs...>{
 template<typename DataType, typename L>
 struct DView {};
 
-template<typename DataType, typename IdxLin, typename Perm, typename ... Idxs>
-struct DView<DataType, DLayout<IdxLin, Perm, Idxs...>> : public RAJA::View<DataType, DLayout<IdxLin, Perm, Idxs...>> {
+template<typename DataType, typename IdxLin, typename ... Idxs>
+struct DView<DataType, DLayout<IdxLin, Idxs...>> :
+    public RAJA::TypedView<DataType, RAJA::Layout<sizeof...(Idxs), IdxLin>, Idxs...> {
+  using Base = RAJA::TypedView<DataType, RAJA::Layout<sizeof...(Idxs), IdxLin>, Idxs...>;
+  using Base::index;
 
-  inline DView(Grid_Data &domain, int sdom_id, DataType *ptr) :
-    RAJA::View<DataType, DLayout<int, Perm, Idxs...>>(
+  template<typename IS>
+  inline DView(Grid_Data &domain, int sdom_id, DataType *ptr, IS perm) :
+    Base(
         ptr,
-        domain.indexSize<Idxs>(sdom_id)...)
+        RAJA::make_permuted_layout<sizeof...(Idxs), IdxLin>(
+            {IdxLin{domain.indexSize<Idxs>(sdom_id)}...},
+            perm))
   {}
+
+  RAJA_HOST_DEVICE RAJA_INLINE 
+      IdxLin index(Idxs... args) const
+  {
+    return this->Base::index(args...);
+  }
 };
+template<typename IdxLin, typename...Idxs>
+constexpr size_t DLayout<IdxLin, Idxs...>::n_dims;
 
 #if 0
 
