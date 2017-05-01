@@ -68,9 +68,9 @@ Additional BSD Notice
 #include <cstring>
 #include <cctype>
 
-#include "RAJA/RAJA.hxx"
+#include "RAJA/RAJA.hpp"
 
-#include "RAJA/Timer.hxx"
+#include "RAJA/util/Timer.hpp"
 
 /*
  ***********************************************

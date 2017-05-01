@@ -67,7 +67,7 @@ Additional BSD Notice
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "RAJA/Timer.hxx"
+#include "RAJA/util/Timer.hpp"
 
 #define LULESH_SHOW_PROGRESS 0
 
