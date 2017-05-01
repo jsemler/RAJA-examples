@@ -50,13 +50,7 @@ include_directories(.)
 
 add_subdirectory(Kripke)
 
-set(KRIPKE_LIBS ${KRIPKE_LIBS} RAJA) 
-
-if(RAJA_ENABLE_CUDA)
-  cuda_add_executable(Kripke-v1.1-RAJA.exe "Kripke.cpp")
-else()
-  add_executable(Kripke-v1.1-RAJA.exe "Kripke.cpp")
-endif()
-
-target_link_libraries(Kripke-v1.1-RAJA.exe ${KRIPKE_LIBS} ${KRIPKE_LIBS} ${RT_LIBRARIES})
-
+raja_add_executable(
+  NAME Kripke-v1.1-RAJA.exe 
+  SOURCES Kripke.cpp
+  DEPENDS_ON ${KRIPKE_LIBS} ${RT_LIBRARIES} RAJA)

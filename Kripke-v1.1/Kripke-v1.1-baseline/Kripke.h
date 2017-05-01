@@ -61,7 +61,7 @@
 
 
 // Adopt RAJA's use of OPENMP
-#include<RAJA/RAJA.hxx>
+#include "RAJA/config.hxx"
 #ifndef KRIPKE_USE_OPENMP
 #ifdef RAJA_ENABLE_OPENMP
 #define KRIPKE_USE_OPENMP

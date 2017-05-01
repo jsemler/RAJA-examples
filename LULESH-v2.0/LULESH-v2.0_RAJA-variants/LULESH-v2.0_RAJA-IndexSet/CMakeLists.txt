@@ -47,19 +47,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if (RAJA_ENABLE_CUDA)
   add_definitions(-DUSE_CASE=9)
-  cuda_add_executable(lulesh2.0_RAJA-ISet.exe
-    lulesh.cc
-    lulesh-comm.cc
-    lulesh-init.cc
-    lulesh-util.cc
-    lulesh-viz.cc)
-  target_link_libraries(lulesh2.0_RAJA-ISet.exe RAJA ${RT_LIBRARIES})
-else()
-  add_executable(lulesh2.0_RAJA-ISet.exe
-    lulesh.cc
-    lulesh-comm.cc
-    lulesh-init.cc
-    lulesh-util.cc
-    lulesh-viz.cc)
-  target_link_libraries(lulesh2.0_RAJA-ISet.exe RAJA ${RT_LIBRARIES})
-endif()
+endif ()
+
+set (lulesh_sources
+  lulesh.cc
+  lulesh-comm.cc
+  lulesh-init.cc
+  lulesh-util.cc
+  lulesh-viz.cc)
+
+raja_add_executable(
+  NAME lulesh2.0_RAJA-ISet.exe
+  SOURCES ${lulesh_sources}
+  DEPENDS_ON ${RT_LIBRARIES})
