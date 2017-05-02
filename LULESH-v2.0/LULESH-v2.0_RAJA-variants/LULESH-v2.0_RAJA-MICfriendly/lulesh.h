@@ -1,5 +1,5 @@
 
-#include "RAJA/RAJA.hxx"
+#include "RAJA/RAJA.hpp"
 
 //
 //   Policies for hybrid segment iteration and segment execution.
