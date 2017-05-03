@@ -43,7 +43,24 @@
 
 add_definitions(-DUSE_MPI=0 -DUSE_OMP=1)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Build options
+option(LULESH_ENABLE_MPI "Build Lulesh with MPI" Off)
+
+if (LULESH_ENABLE_MPI)
+  set(MPI_CXX_SKIP_FLAGS
+    -DMPI_NO_CPPBIND -DOMPI_SKIP_MPICXX -D_MPICC_H -DMPICH_SKIP_MPICXX -DMPIBULL_SKIP_MPICXX
+    CACHE STRING "Default skip-flags used (for SGI, OpenMPI, HP-MPI, MPICH, BULL-MPI)")
+  find_package(MPI REQUIRED)
+  add_definitions(-DUSE_MPI=1 -DUSE_OMP=0)
+endif()
+
+if (LULESH_ENABLE_MPI)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+    ${MPI_INCLUDE_PATH}
+    ${MPI_CXXFLAGS})
+else()
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 if (RAJA_ENABLE_CUDA)
   add_definitions(-DUSE_CASE=9)
@@ -60,3 +77,7 @@ raja_add_executable(
   NAME lulesh2.0_RAJA-ISet.exe
   SOURCES ${lulesh_sources}
   DEPENDS_ON ${RT_LIBRARIES})
+
+if (LULESH_ENABLE_MPI)
+  target_link_libraries(lulesh2.0_RAJA-ISet.exe ${MPI_LIBRARIES})
+endif()
