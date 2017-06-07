@@ -25,7 +25,7 @@
 #include <math.h>
 #include <vector>
 
-#include "RAJA/RAJA.hxx"
+#include "RAJA/RAJA.hpp"
 
 //
 //   RAJA IndexSet type used in loop traversals.
@@ -34,7 +34,7 @@ typedef RAJA::IndexSet LULESH_ISET;
 
 
 //**************************************************
-// Allow flexibility for arithmetic representations 
+// Allow flexibility for arithmetic representations
 //**************************************************
 
 #define MAX(a, b) ( ((a) > (b)) ? (a) : (b))
@@ -395,7 +395,7 @@ class Domain {
    Index_p   regElemlist(Int_t r)    { return m_regElemlist[r] ; }
    Index_t&  regElemlist(Int_t r, Index_t idx) { return m_regElemlist[r][idx] ; }
 
-   // Parameters 
+   // Parameters
 
    // Cutoffs
    Real_t u_cut() const               { return m_u_cut ; }
@@ -447,7 +447,7 @@ class Domain {
    Int_t&  cost()             { return m_cost ; }
    Index_t&  numElem()            { return m_numElem ; }
    Index_t&  numNode()            { return m_numNode ; }
-   
+
    Index_t&  maxPlaneSize()       { return m_maxPlaneSize ; }
    Index_t&  maxEdgeSize()        { return m_maxEdgeSize ; }
 
@@ -467,14 +467,14 @@ class Domain {
    // MPI-Related additional data
    //
 
-#if USE_MPI   
-   // Communication Work space 
+#if USE_MPI
+   // Communication Work space
    Real_p commDataSend ;
    Real_p commDataRecv ;
-   
-   // Maximum number of block neighbors 
-   MPI_Request recvRequest[26] ; // 6 faces + 12 edges + 8 corners 
-   MPI_Request sendRequest[26] ; // 6 faces + 12 edges + 8 corners 
+
+   // Maximum number of block neighbors
+   MPI_Request recvRequest[26] ; // 6 faces + 12 edges + 8 corners
+   MPI_Request sendRequest[26] ; // 6 faces + 12 edges + 8 corners
 #endif
 
   private:
@@ -579,40 +579,40 @@ class Domain {
    Index_p m_perm ;
 
    // Cutoffs (treat as constants)
-   const Real_t  m_e_cut ;             // energy tolerance 
-   const Real_t  m_p_cut ;             // pressure tolerance 
-   const Real_t  m_q_cut ;             // q tolerance 
-   const Real_t  m_v_cut ;             // relative volume tolerance 
-   const Real_t  m_u_cut ;             // velocity tolerance 
+   const Real_t  m_e_cut ;             // energy tolerance
+   const Real_t  m_p_cut ;             // pressure tolerance
+   const Real_t  m_q_cut ;             // q tolerance
+   const Real_t  m_v_cut ;             // relative volume tolerance
+   const Real_t  m_u_cut ;             // velocity tolerance
 
    // Other constants (usually setable, but hardcoded in this proxy app)
 
-   const Real_t  m_hgcoef ;            // hourglass control 
+   const Real_t  m_hgcoef ;            // hourglass control
    const Real_t  m_ss4o3 ;
-   const Real_t  m_qstop ;             // excessive q indicator 
+   const Real_t  m_qstop ;             // excessive q indicator
    const Real_t  m_monoq_max_slope ;
    const Real_t  m_monoq_limiter_mult ;
-   const Real_t  m_qlc_monoq ;         // linear term coef for q 
-   const Real_t  m_qqc_monoq ;         // quadratic term coef for q 
+   const Real_t  m_qlc_monoq ;         // linear term coef for q
+   const Real_t  m_qqc_monoq ;         // quadratic term coef for q
    const Real_t  m_qqc ;
    const Real_t  m_eosvmax ;
    const Real_t  m_eosvmin ;
-   const Real_t  m_pmin ;              // pressure floor 
-   const Real_t  m_emin ;              // energy floor 
-   const Real_t  m_dvovmax ;           // maximum allowable volume change 
-   const Real_t  m_refdens ;           // reference density 
+   const Real_t  m_pmin ;              // pressure floor
+   const Real_t  m_emin ;              // energy floor
+   const Real_t  m_dvovmax ;           // maximum allowable volume change
+   const Real_t  m_refdens ;           // reference density
 
    // Variables to keep track of timestep, simulation time, and cycle
-   Real_t  m_dtcourant ;         // courant constraint 
-   Real_t  m_dthydro ;           // volume change constraint 
-   Int_t   m_cycle ;             // iteration count for simulation 
-   Real_t  m_dtfixed ;           // fixed time increment 
-   Real_t  m_time ;              // current time 
-   Real_t  m_deltatime ;         // variable time increment 
+   Real_t  m_dtcourant ;         // courant constraint
+   Real_t  m_dthydro ;           // volume change constraint
+   Int_t   m_cycle ;             // iteration count for simulation
+   Real_t  m_dtfixed ;           // fixed time increment
+   Real_t  m_time ;              // current time
+   Real_t  m_deltatime ;         // variable time increment
    Real_t  m_deltatimemultlb ;
    Real_t  m_deltatimemultub ;
-   Real_t  m_dtmax ;             // maximum allowable time increment 
-   Real_t  m_stoptime ;          // end time for simulation 
+   Real_t  m_dtmax ;             // maximum allowable time increment
+   Real_t  m_stoptime ;          // end time for simulation
 
    Int_t   m_numRanks ;
 
@@ -630,7 +630,7 @@ class Domain {
    Index_t m_maxPlaneSize ;
    Index_t m_maxEdgeSize ;
 
-   // OMP hack 
+   // OMP hack
    Index_p m_nodeElemStart ;
    Index_p m_nodeElemCornerList ;
 
@@ -644,13 +644,13 @@ class Domain {
 typedef Real_t &(Domain::* Domain_member )(Index_t) ;
 
 struct cmdLineOpts {
-   Int_t its; // -i 
-   Int_t nx;  // -s 
-   Int_t numReg; // -r 
+   Int_t its; // -i
+   Int_t nx;  // -s
+   Int_t numReg; // -r
    Int_t numFiles; // -f
    Int_t showProg; // -p
    Int_t quiet; // -q
-   Int_t viz; // -v 
+   Int_t viz; // -v
    Int_t cost; // -c
    Int_t balance; // -b
 };

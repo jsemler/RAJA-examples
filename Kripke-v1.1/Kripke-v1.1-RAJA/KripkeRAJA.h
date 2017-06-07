@@ -1,7 +1,7 @@
 #ifndef KRIPKERAJA_H__
 #define KRIPKERAJA_H__
 
-#include<RAJA/RAJA.hxx>
+#include "RAJA/RAJA.hpp"
 #include<Kripke/Grid.h>
 #include<Kripke/Subdomain.h>
 

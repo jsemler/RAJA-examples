@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include "lulesh.h"
 
-#include "RAJA/internal/defines.hxx"
+#include "RAJA/util/defines.hpp"
 
 /////////////////////////////////////////////////////////////////////
 Domain::Domain(Int_t numRanks, Index_t colLoc,
@@ -39,7 +39,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
    m_dvovmax(Real_t(0.1)),
    m_refdens(Real_t(1.0)),
 //
-// set pointers to (potentially) "new'd" arrays to null to 
+// set pointers to (potentially) "new'd" arrays to null to
 // simplify deallocation.
 //
    m_regElemSize(0),
@@ -49,7 +49,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
    m_nodeElemStart(0),
    m_nodeElemCornerList(0)
 #if USE_MPI
-   , 
+   ,
    commDataSend(0),
    commDataRecv(0)
 #endif
@@ -71,7 +71,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
    m_colLoc   =   colLoc ;
    m_rowLoc   =   rowLoc ;
    m_planeLoc = planeLoc ;
-   
+
    m_sizeX = edgeElems ;
    m_sizeY = edgeElems ;
    m_sizeZ = edgeElems ;
@@ -84,10 +84,10 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
 #if !defined(LULESH_LIST_INDEXSET)
    m_perm = new Index_t[numElem()] ;
 #endif
-   // Elem-centered 
+   // Elem-centered
    AllocateElemPersistent(numElem()) ;
 
-   // Node-centered 
+   // Node-centered
    AllocateNodePersistent(numNode()) ;
 
    SetupCommBuffers(edgeNodes);
@@ -96,7 +96,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
 
    BuildMeshCoordinates(nx, edgeNodes);
 
-   // Setup index sets for nodes and elems 
+   // Setup index sets for nodes and elems
    CreateMeshIndexSets();
 
    // Setup symmetry nodesets
@@ -109,7 +109,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
    SetupBoundaryConditions(edgeElems);
 
    // Setup region index sets. For now, these are constant sized
-   // throughout the run, but could be changed every cycle to 
+   // throughout the run, but could be changed every cycle to
    // simulate effects of ALE on the lagrange solver
    CreateRegionIndexSets(nr, balance);
 
@@ -174,7 +174,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
       }
    }
 
-   // Basic Field Initialization 
+   // Basic Field Initialization
    RAJA::forall<elem_exec_policy>(getElemISet(), [&] (int i) {
       e[i] =  Real_t(0.0) ;
       p[i] =  Real_t(0.0) ;
@@ -227,7 +227,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
    time()    = Real_t(0.) ;
    cycle()   = Int_t(0) ;
 
-   // initialize field data 
+   // initialize field data
    RAJA::forall<elem_exec_policy>(getElemISet(), [&] (int i) {
       Real_t x_local[8], y_local[8], z_local[8] ;
       Index_t *elemToNode = &nodelist[8*i] ;
@@ -286,7 +286,7 @@ Domain::~Domain()
       }
    }
    delete [] m_regElemlist;
-   
+
    if (m_perm != 0) {
       delete [] m_perm ;
    }
@@ -301,7 +301,7 @@ Domain::~Domain()
 void
 Domain::BuildMeshTopology(Index_t edgeNodes, Index_t edgeElems)
 {
-  // embed hexehedral elements in nodal point lattice 
+  // embed hexehedral elements in nodal point lattice
   Index_t zidx = 0 ;
   Index_t nidx = 0 ;
   for (Index_t plane=0; plane<edgeElems; ++plane) {
@@ -330,7 +330,7 @@ Domain::BuildMeshCoordinates(Index_t nx, Index_t edgeNodes)
 {
   Index_t meshEdgeElems = m_tp*nx ;
 
-  // initialize nodal coordinates 
+  // initialize nodal coordinates
   Index_t nidx = 0 ;
   Real_t tz = Real_t(1.125)*Real_t(m_planeLoc*nx)/Real_t(meshEdgeElems) ;
   for (Index_t plane=0; plane<edgeNodes; ++plane) {
@@ -342,13 +342,13 @@ Domain::BuildMeshCoordinates(Index_t nx, Index_t edgeNodes)
         y[nidx] = ty ;
         z[nidx] = tz ;
         ++nidx ;
-        // tx += ds ; // may accumulate roundoff... 
+        // tx += ds ; // may accumulate roundoff...
         tx = Real_t(1.125)*Real_t(m_colLoc*nx+col+1)/Real_t(meshEdgeElems) ;
       }
-      // ty += ds ;  // may accumulate roundoff... 
+      // ty += ds ;  // may accumulate roundoff...
       ty = Real_t(1.125)*Real_t(m_rowLoc*nx+row+1)/Real_t(meshEdgeElems) ;
     }
-    // tz += ds ;  // may accumulate roundoff... 
+    // tz += ds ;  // may accumulate roundoff...
     tz = Real_t(1.125)*Real_t(m_planeLoc*nx+plane+1)/Real_t(meshEdgeElems) ;
   }
 
@@ -366,7 +366,7 @@ Domain::SetupThreadSupportStructures()
 #endif
 
   if (numthreads > 1) {
-    // set up node-centered indexing of elements 
+    // set up node-centered indexing of elements
     Index_t *nodeElemCount = new Index_t[numNode()] ;
 
     for (Index_t i=0; i<numNode(); ++i) {
@@ -388,7 +388,7 @@ Domain::SetupThreadSupportStructures()
       m_nodeElemStart[i] =
         m_nodeElemStart[i-1] + nodeElemCount[i-1] ;
     }
-       
+
     m_nodeElemCornerList = new Index_t[m_nodeElemStart[numNode()]];
 
     for (Index_t i=0; i < numNode(); ++i) {
@@ -429,12 +429,12 @@ Domain::SetupThreadSupportStructures()
 void
 Domain::SetupCommBuffers(Index_t RAJA_UNUSED_ARG(edgeNodes))
 {
-  // allocate a buffer large enough for nodal ghost data 
+  // allocate a buffer large enough for nodal ghost data
   Index_t maxEdgeSize = MAX(this->sizeX(), MAX(this->sizeY(), this->sizeZ()))+1 ;
   m_maxPlaneSize = CACHE_ALIGN_REAL(maxEdgeSize*maxEdgeSize) ;
   m_maxEdgeSize = CACHE_ALIGN_REAL(maxEdgeSize) ;
 
-  // assume communication to 6 neighbors by default 
+  // assume communication to 6 neighbors by default
   m_rowMin = (m_rowLoc == 0)        ? 0 : 1;
   m_rowMax = (m_rowLoc == m_tp-1)     ? 0 : 1;
   m_colMin = (m_colLoc == 0)        ? 0 : 1;
@@ -442,13 +442,13 @@ Domain::SetupCommBuffers(Index_t RAJA_UNUSED_ARG(edgeNodes))
   m_planeMin = (m_planeLoc == 0)    ? 0 : 1;
   m_planeMax = (m_planeLoc == m_tp-1) ? 0 : 1;
 
-#if USE_MPI   
-  // account for face communication 
+#if USE_MPI
+  // account for face communication
   Index_t comBufSize =
     (m_rowMin + m_rowMax + m_colMin + m_colMax + m_planeMin + m_planeMax) *
     m_maxPlaneSize * MAX_FIELDS_PER_MPI_COMM ;
 
-  // account for edge communication 
+  // account for edge communication
   comBufSize +=
     ((m_rowMin & m_colMin) + (m_rowMin & m_planeMin) + (m_colMin & m_planeMin) +
      (m_rowMax & m_colMax) + (m_rowMax & m_planeMax) + (m_colMax & m_planeMax) +
@@ -456,8 +456,8 @@ Domain::SetupCommBuffers(Index_t RAJA_UNUSED_ARG(edgeNodes))
      (m_rowMin & m_colMax) + (m_rowMax & m_planeMin) + (m_colMax & m_planeMin)) *
     m_maxEdgeSize * MAX_FIELDS_PER_MPI_COMM ;
 
-  // account for corner communication 
-  // factor of 16 is so each buffer has its own cache line 
+  // account for corner communication
+  // factor of 16 is so each buffer has its own cache line
   comBufSize += ((m_rowMin & m_colMin & m_planeMin) +
                  (m_rowMin & m_colMin & m_planeMax) +
                  (m_rowMin & m_colMax & m_planeMin) +
@@ -469,10 +469,10 @@ Domain::SetupCommBuffers(Index_t RAJA_UNUSED_ARG(edgeNodes))
 
   this->commDataSend = new Real_t[comBufSize] ;
   this->commDataRecv = new Real_t[comBufSize] ;
-  // prevent floating point exceptions 
+  // prevent floating point exceptions
   memset(this->commDataSend, 0, comBufSize*sizeof(Real_t)) ;
   memset(this->commDataRecv, 0, comBufSize*sizeof(Real_t)) ;
-#endif   
+#endif
 
 }
 
@@ -482,7 +482,7 @@ void
 Domain::CreateMeshIndexSets()
 {
    // leave nodes and elems in canonical ordering for now...
-   m_domNodeISet.push_back( RAJA::RangeSegment(0, numNode()) );   
+   m_domNodeISet.push_back( RAJA::RangeSegment(0, numNode()) );
    m_domElemISet.push_back( RAJA::RangeSegment(0, numElem()) );
 }
 
@@ -490,7 +490,7 @@ Domain::CreateMeshIndexSets()
 void
 Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
 {
-#if USE_MPI   
+#if USE_MPI
    Index_t myRank;
    MPI_Comm_rank(MPI_COMM_WORLD, &myRank) ;
    srand(myRank);
@@ -504,7 +504,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
    Index_t nextIndex = 0;
    //if we only have one region just fill it
    // Fill out the regNumList with material numbers, which are always
-   // the region index plus one 
+   // the region index plus one
    if(numReg() == 1) {
       while (nextIndex < numElem()) {
          this->regNumList(nextIndex) = 1;
@@ -529,7 +529,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
       Index_t runto = 0;
       Int_t costDenominator = 0;
       Int_t* regBinEnd = new Int_t[numReg()];
-      //Determine the relative weights of all the regions.  This is based off the -b flag.  Balance is the value passed into b.  
+      //Determine the relative weights of all the regions.  This is based off the -b flag.  Balance is the value passed into b.
       for (Index_t i=0 ; i<numReg() ; ++i) {
          regElemSize(i) = 0;
          costDenominator += pow((i+1), balance);  //Total sum of all regions weights
@@ -542,7 +542,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
          Index_t i = 0;
          while(regionVar >= regBinEnd[i])
             i++;
-         //rotate the regions based on MPI rank.  Rotation is Rank % NumRegions this makes each domain have a different region with 
+         //rotate the regions based on MPI rank.  Rotation is Rank % NumRegions this makes each domain have a different region with
          //the highest representation
          regionNum = ((i + myRank) % numReg()) + 1;
          // make sure we don't pick the same region twice in a row
@@ -566,7 +566,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
          }
          else if(binSize < 974) {
            elements = rand() % 64 + 64;
-         } 
+         }
          else if(binSize < 978) {
            elements = rand() % 128 + 128;
          }
@@ -582,12 +582,12 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
             nextIndex++;
          }
          lastReg = regionNum;
-      } 
+      }
 
       delete [] regBinEnd;
 
       // Convert regNumList to region index sets
-      // First, count size of each region 
+      // First, count size of each region
       for (Index_t i=0 ; i<numElem() ; ++i) {
          int r = this->regNumList(i)-1; // region index == regnum-1
          regElemSize(r)++;
@@ -623,21 +623,21 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
          if ( regElemSize(r) != m_domRegISet[r].getLength() ) good = false;
          if (good) {
             Index_t* regList = regElemlist(r);
-            int i = 0; 
-            RAJA::forall< LULESH_ISET::ExecPolicy<RAJA::seq_segit, RAJA::seq_exec> >(m_domRegISet[r], [&] (int idx) { 
+            int i = 0;
+            RAJA::forall< LULESH_ISET::ExecPolicy<RAJA::seq_segit, RAJA::seq_exec> >(m_domRegISet[r], [&] (int idx) {
                good &= (idx == regList[i]);
                i++;
             } );
          }
-         printf("\nRegion %d index set is %s\n", r, (good ? "GOOD" : "BAD")); 
+         printf("\nRegion %d index set is %s\n", r, (good ? "GOOD" : "BAD"));
       }
 #endif
    }
-   
+
 }
 
 /////////////////////////////////////////////////////////////
-void 
+void
 Domain::CreateSymmetryIndexSets(Index_t edgeNodes)
 {
   if (m_planeLoc == 0) {
@@ -683,7 +683,7 @@ Domain::SetupElementConnectivities(Index_t edgeElems)
    lxip[numElem()-1] = numElem()-1 ;
 
    for (Index_t i=0; i<edgeElems; ++i) {
-      letam[i] = i ; 
+      letam[i] = i ;
       letap[numElem()-edgeElems+i] = numElem()-edgeElems+i ;
    }
    for (Index_t i=edgeElems; i<numElem(); ++i) {
@@ -703,7 +703,7 @@ Domain::SetupElementConnectivities(Index_t edgeElems)
 
 /////////////////////////////////////////////////////////////
 void
-Domain::SetupBoundaryConditions(Index_t edgeElems) 
+Domain::SetupBoundaryConditions(Index_t edgeElems)
 {
   Index_t ghostIdx[6] ;  // offsets to ghost locations
 
@@ -746,7 +746,7 @@ Domain::SetupBoundaryConditions(Index_t edgeElems)
     ghostIdx[5] = pidx ;
   }
 
-  // symmetry plane or free surface BCs 
+  // symmetry plane or free surface BCs
   for (Index_t i=0; i<edgeElems; ++i) {
     Index_t planeInc = i*edgeElems*edgeElems ;
     Index_t rowInc   = i*edgeElems ;
@@ -779,11 +779,11 @@ Domain::SetupBoundaryConditions(Index_t edgeElems)
       }
 
       if (m_rowLoc == m_tp-1) {
-        elemBC[planeInc+j+edgeElems*edgeElems-edgeElems] |= 
+        elemBC[planeInc+j+edgeElems*edgeElems-edgeElems] |=
           ETA_P_FREE ;
       }
       else {
-        elemBC[planeInc+j+edgeElems*edgeElems-edgeElems] |= 
+        elemBC[planeInc+j+edgeElems*edgeElems-edgeElems] |=
           ETA_P_COMM ;
         letap[planeInc+j+edgeElems*edgeElems-edgeElems] =
           ghostIdx[3] +  rowInc + j ;
@@ -816,12 +816,12 @@ void InitMeshDecomp(Int_t numRanks, Int_t myRank,
    Int_t testProcs;
    Int_t dx, dy, dz;
    Int_t myDom;
-   
-   // Assume cube processor layout for now 
+
+   // Assume cube processor layout for now
    testProcs = Int_t(cbrt(Real_t(numRanks))+0.5) ;
    if (testProcs*testProcs*testProcs != numRanks) {
       printf("Num processors must be a cube of an integer (1, 8, 27, ...)\n") ;
-#if USE_MPI      
+#if USE_MPI
       MPI_Abort(MPI_COMM_WORLD, -1) ;
 #else
       exit(-1);
@@ -829,7 +829,7 @@ void InitMeshDecomp(Int_t numRanks, Int_t myRank,
    }
    if (sizeof(Real_t) != 4 && sizeof(Real_t) != 8) {
       printf("MPI operations only support float and double right now...\n");
-#if USE_MPI      
+#if USE_MPI
       MPI_Abort(MPI_COMM_WORLD, -1) ;
 #else
       exit(-1);
@@ -837,7 +837,7 @@ void InitMeshDecomp(Int_t numRanks, Int_t myRank,
    }
    if (MAX_FIELDS_PER_MPI_COMM > CACHE_COHERENCE_PAD_REAL) {
       printf("corner element comm buffers too small.  Fix code.\n") ;
-#if USE_MPI      
+#if USE_MPI
       MPI_Abort(MPI_COMM_WORLD, -1) ;
 #else
       exit(-1);
@@ -851,7 +851,7 @@ void InitMeshDecomp(Int_t numRanks, Int_t myRank,
    // temporary test
    if (dx*dy*dz != numRanks) {
       printf("error -- must have as many domains as procs\n") ;
-#if USE_MPI      
+#if USE_MPI
       MPI_Abort(MPI_COMM_WORLD, -1) ;
 #else
       exit(-1);

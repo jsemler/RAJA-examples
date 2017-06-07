@@ -56,7 +56,7 @@
 
 
 // Adopt RAJA's use of OPENMP
-#include<RAJA/RAJA.hxx>
+#include "RAJA/RAJA.hpp"
 #ifndef KRIPKE_USE_OPENMP
 #ifdef RAJA_ENABLE_OPENMP
 #define KRIPKE_USE_OPENMP
@@ -94,7 +94,7 @@ enum Nesting_Order {
   NEST_ZGD
 };
 
-/** 
+/**
  *Tags corresponding Nesting_Order's, as types
  */
 struct NEST_DGZ_T {};

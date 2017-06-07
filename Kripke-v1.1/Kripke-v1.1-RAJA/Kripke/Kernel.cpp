@@ -34,7 +34,7 @@
 #include<Kripke/Grid.h>
 #include<Kripke/SubTVec.h>
 
-#include<RAJA/RAJA.hxx>
+#include<RAJA/RAJA.hpp>
 
 #include<Kripke/Kernel/Kernel_3d_GDZ.h>
 #include<Kripke/Kernel/Kernel_3d_DGZ.h>
@@ -52,7 +52,7 @@
 #include<Kripke/Kernel/SweepPolicy.h>
 #include<Kripke/Kernel/ParticleEditPolicy.h>
 
-// For now, if CUDA is being used, then we are using functors for the kernels 
+// For now, if CUDA is being used, then we are using functors for the kernels
 // instead of lambdas.  CUDA8's __host__ __device__ lambdas might fix this
 // restriction
 #ifdef RAJA_ENABLE_CUDA
@@ -71,7 +71,7 @@
 
 /*
  This function provides a mapping from the runtime Nesting_Order variable to a
- compile-time type (ie NEST_DZG_T, etc.), passing that type as the first 
+ compile-time type (ie NEST_DZG_T, etc.), passing that type as the first
  argument to the callable "kernel".
 */
 template<typename KERNEL, typename ... ARGS>
@@ -134,11 +134,11 @@ struct Kernel_LTimes{
   void operator()(nest_type, Grid_Data &domain) const {
 
     typedef DataPolicy<nest_type> POL;
-    
+
     using PHI = typename POL::View_Phi;
     using PSI = typename POL::View_Psi;
-    using ELL = typename POL::View_Ell; 
-    
+    using ELL = typename POL::View_Ell;
+
     // Zero Phi
     FORALL_ZONESETS(RAJA::seq_exec, domain, sdom_id, sdom)
       sdom.phi->clear(0.0);
@@ -157,7 +157,7 @@ struct Kernel_LTimes{
 
 #ifdef KRIPKE_USE_FUNCTORS
       dForallN<LTimesPolicy<nest_type>, IMoment, IDirection, IGroup, IZone>(
-        domain, sdom_id, 
+        domain, sdom_id,
         LTimesFcn<PHI, ELL, PSI>(phi, ell, psi, group0)
       );
 #else
@@ -249,7 +249,7 @@ struct Kernel_Scattering{
   template<typename nest_type>
   RAJA_INLINE
   void operator()(nest_type, Grid_Data &domain) const {
-    
+
     typedef DataPolicy<nest_type> POL;
 
     // Zero out source terms
@@ -284,7 +284,7 @@ struct Kernel_Scattering{
       dForallN<ScatteringPolicy<nest_type>, IMoment, IGlobalGroup, IGlobalGroup, IMix>(
         domain, sdom_id,
         RAJA_LAMBDA (IMoment nm, IGlobalGroup g, IGlobalGroup gp, IMix mix){
-        
+
           ILegendre n = moment_to_coeff(nm);
           IZone zone = mixed_to_zones(mix);
           IMaterial material = mixed_material(mix);
@@ -293,7 +293,7 @@ struct Kernel_Scattering{
           phi_out(nm, gp, zone) +=
             sigs(n, g, gp, material) * phi(nm, g, zone) * fraction;
 
-        });  
+        });
 #endif
     END_FORALL // zonesets
   }
@@ -306,7 +306,7 @@ void Kernel::scattering(Grid_Data *domain) {
 
 
 
-  
+
 /**
  * Add an isotropic source, with flux of 1, to every zone with Region 1
  * (or material 0).
@@ -336,7 +336,7 @@ struct Kernel_Source {
                   typename POL::View_MixedToFraction>
                 (phi_out, mixed_to_zones, mixed_material, mixed_fraction)
       );
-      
+
 
 #else
       dForallN<SourcePolicy<nest_type>, IGlobalGroup, IMix>(
@@ -349,7 +349,7 @@ struct Kernel_Source {
           if(*material == 0){
             phi_out(IMoment(0), g, zone) += 1.0 * fraction;
           }
-      }); 
+      });
 #endif
     END_FORALL
   }
@@ -367,7 +367,7 @@ struct Kernel_Sweep{
   template<typename nest_type>
   RAJA_INLINE
   void operator()(nest_type, Grid_Data &domain, int sdom_id) const {
-    
+
     typedef DataPolicy<nest_type> POL;
 
     Subdomain *sdom = &domain.subdomains[sdom_id];
@@ -396,7 +396,7 @@ struct Kernel_Sweep{
     typename POL::View_IdxToK  idx_to_k(domain, sdom_id, (IZoneK*)&extent.idx_to_k[0]);
 
 #ifdef KRIPKE_USE_FUNCTORS
-    RAJA::forallN<SweepPolicy<nest_type>, IDirection, IGroup, IZoneIdx>( 
+    RAJA::forallN<SweepPolicy<nest_type>, IDirection, IGroup, IZoneIdx>(
       domain.indexRange<IDirection>(sdom_id),
       domain.indexRange<IGroup>(sdom_id),
       extent.indexset_sweep,
@@ -413,12 +413,12 @@ struct Kernel_Sweep{
                typename POL::View_IdxToI,
                typename POL::View_IdxToJ,
                typename POL::View_IdxToK>
-               (direction, rhs, psi, sigt, dx, dy, dz, zone_layout, 
+               (direction, rhs, psi, sigt, dx, dy, dz, zone_layout,
                 face_lf, face_fr, face_bo, idx_to_i, idx_to_j, idx_to_k)
     );
 #else
 
-    RAJA::forallN<SweepPolicy<nest_type>, IDirection, IGroup, IZoneIdx>( 
+    RAJA::forallN<SweepPolicy<nest_type>, IDirection, IGroup, IZoneIdx>(
       domain.indexRange<IDirection>(sdom_id),
       domain.indexRange<IGroup>(sdom_id),
       extent.indexset_sweep,
@@ -448,7 +448,7 @@ struct Kernel_Sweep{
         face_lf(d,g,j,k) = 2.0 * psi_d_g_z - face_lf(d,g,j,k);
         face_fr(d,g,i,k) = 2.0 * psi_d_g_z - face_fr(d,g,i,k);
         face_bo(d,g,i,j) = 2.0 * psi_d_g_z - face_bo(d,g,i,j);
-      }); 
+      });
 #endif
   }
 };
@@ -472,18 +472,18 @@ struct Kernel_ParticleEdit {
   RAJA_INLINE
   void operator()(nest_type, Grid_Data &domain) const {
     typedef DataPolicy<nest_type> POL;
- 
+
     RAJA::ReduceSum<typename POL::reduce_policy, double> part_reduce(0.0);
-       
+
     // Loop over zoneset subdomains
     FORALL_SUBDOMAINS(RAJA::seq_exec, domain, sdom_id, sdom)
       typename POL::View_Psi         psi      (domain, sdom_id, sdom.psi->ptr());
       typename POL::View_Directions  direction(domain, sdom_id, sdom.directions);
       typename POL::View_Volume      volume   (domain, sdom_id, &sdom.volume[0]);
 
-      
+
 #ifdef KRIPKE_USE_FUNCTORS
-      dForallN<ParticleEditPolicy<nest_type>, IDirection, IGroup, IZone>( 
+      dForallN<ParticleEditPolicy<nest_type>, IDirection, IGroup, IZone>(
         domain, sdom_id,
         ParticleEditFcn<decltype(part_reduce),
                   typename POL::View_Directions,
@@ -492,17 +492,17 @@ struct Kernel_ParticleEdit {
                 (part_reduce, direction, psi, volume)
       );
 #else
-      dForallN<ParticleEditPolicy<nest_type>, IDirection, IGroup, IZone>( 
+      dForallN<ParticleEditPolicy<nest_type>, IDirection, IGroup, IZone>(
         domain, sdom_id,
         RAJA_LAMBDA (IDirection d, IGroup g, IZone z){
-          part_reduce += direction(d).w * psi(d,g,z) * volume(z);              
+          part_reduce += direction(d).w * psi(d,g,z) * volume(z);
         }
-      ); 
+      );
 #endif
     END_FORALL
-    
+
     part = part_reduce;
-    
+
     // reduce across MPI
 #ifdef KRIPKE_USE_MPI
     double part_global;

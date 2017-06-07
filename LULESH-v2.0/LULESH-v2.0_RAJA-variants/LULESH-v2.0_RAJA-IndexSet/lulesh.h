@@ -1,5 +1,5 @@
 
-#include "RAJA/RAJA.hxx"
+#include "RAJA/RAJA.hpp"
 #include "luleshPolicy.hxx"
 #include "luleshMemory.hxx"
 
