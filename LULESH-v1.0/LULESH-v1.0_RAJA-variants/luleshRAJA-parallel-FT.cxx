@@ -142,12 +142,10 @@ const int lulesh_ztile = 2;
 //
 typedef RAJA::seq_segit              IndexSet_Seg_Iter;
 //typedef RAJA::omp_parallel_for_segit IndexSet_Seg_Iter;
-//typedef RAJA::cilk_for_segit         IndexSet_Seg_Iter;
 
 //typedef RAJA::seq_exec              Segment_Exec;
 //typedef RAJA::simd_exec             Segment_Exec;
 typedef RAJA::omp_parallel_for_exec Segment_Exec;
-//typedef RAJA::cilk_for_exec         Segment_Exec;
 
 typedef RAJA::IndexSet::ExecPolicy<IndexSet_Seg_Iter, Segment_Exec> node_exec_policy;
 typedef RAJA::IndexSet::ExecPolicy<IndexSet_Seg_Iter, Segment_Exec> elem_exec_policy;

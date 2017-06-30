@@ -38,9 +38,8 @@ enum TilingMode
 #define LULESH_TILE_COLOR_SIMD  7 /*  Colored like USE_CASE 6, but colors */
                                   //  are permuted to be contiguous chunks,
                                   //  like LULESH_TILED_ORDERED
-#define LULESH_CILK             8 /*  cilk_for applied to each loop */
-#define LULESH_CUDA_CANONICAL   9 /*  CUDA launch applied to each loop */
-#define LULESH_CUDA_COLOR_SIMD 10 /*  Technique 7 on GPU to avoid */
+#define LULESH_CUDA_CANONICAL   8 /*  CUDA launch applied to each loop */
+#define LULESH_CUDA_COLOR_SIMD  9 /*  Technique 7 on GPU to avoid */
                                   //  OMP_FINE_SYNC data movement.
 
 #ifndef USE_CASE
@@ -182,26 +181,6 @@ typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> mat_exec_polic
 typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> symnode_exec_policy;
 
 typedef RAJA::omp_reduce reduce_policy; 
-
-// ----------------------------------------------------
-#elif USE_CASE == LULESH_CILK
-
-// Requires OMP_FINE_SYNC when run in parallel
-#define OMP_FINE_SYNC 1
-
-// AllocateTouch should definitely be used
-
-TilingMode const lulesh_tiling_mode = Canonical;
-
-typedef RAJA::cilk_for_segit         Hybrid_Seg_Iter;
-typedef RAJA::cilk_for_exec          Segment_Exec;
-
-typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> node_exec_policy;
-typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> elem_exec_policy;
-typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> mat_exec_policy;
-typedef RAJA::IndexSet::ExecPolicy<Hybrid_Seg_Iter, Segment_Exec> symnode_exec_policy;
-
-typedef RAJA::cilk_reduce            reduce_policy ;
 
 // ----------------------------------------------------
 #elif USE_CASE == LULESH_CUDA_CANONICAL
