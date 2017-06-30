@@ -175,9 +175,6 @@ Additional BSD Notice
 typedef RAJA::omp_parallel_for_exec Segment_Exec;
 typedef RAJA::omp_reduce            reduce_policy;
 
-//typedef RAJA::cilk_for_exec         Segment_Exec;
-//typedef RAJA::cilk_reduce            reduce_policy;
-
 typedef Segment_Exec node_exec_policy;
 typedef Segment_Exec elem_exec_policy;
 typedef Segment_Exec min_exec_policy;
